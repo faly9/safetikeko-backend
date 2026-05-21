@@ -1,0 +1,118 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Vague {
+  id_vague  Int          @id @default(autoincrement())
+  nom_vague String
+  is_actif  Boolean      @default(true)
+  classes   ClasseUniv[]
+  etudiants Etudiant[]
+}
+
+model ClasseUniv {
+  id_classe  Int        @id @default(autoincrement())
+  niveau     String
+  filiere    String
+  mode       ModeClasse
+  vague_id   Int
+  delegue_id Int?       @unique
+  delegue    User?      @relation("DelegueClasse", fields: [delegue_id], references: [id_user])
+  vague      Vague      @relation(fields: [vague_id], references: [id_vague])
+  etudiants  Etudiant[]
+  tables     Table[]
+}
+
+model Table {
+  id_table  Int        @id @default(autoincrement())
+  num_table String
+  classe_id Int
+  etudiants Etudiant[]
+  classe    ClasseUniv @relation(fields: [classe_id], references: [id_classe])
+}
+
+model Etudiant {
+  matricule String     @id
+  nom       String
+  prenom    String
+  photo     String?
+  classe_id Int
+  vague_id  Int
+  table_id  Int
+  entrees   Entree[]
+  classe    ClasseUniv @relation(fields: [classe_id], references: [id_classe])
+  table     Table      @relation(fields: [table_id], references: [id_table])
+  vague     Vague      @relation(fields: [vague_id], references: [id_vague])
+  paiement  Paiement?
+  qrcode    QRCode?
+}
+
+model User {
+  id_user       Int         @id @default(autoincrement())
+  pseudo        String      @unique
+  mot_de_passe  String
+  role          Role
+  classeDelegue ClasseUniv? @relation("DelegueClasse")
+  entrees       Entree[]
+  paiements     Paiement[]
+}
+
+model Paiement {
+  id_paiement     Int            @id @default(autoincrement())
+  montant         Float
+  date_paiement   DateTime       @default(now())
+  statut_paiement StatutPaiement @default(EN_ATTENTE)
+  etudiant_id     String         @unique
+  delegue_id      Int
+  qrcode_id       Int            @unique
+  delegue         User           @relation(fields: [delegue_id], references: [id_user])
+  etudiant        Etudiant       @relation(fields: [etudiant_id], references: [matricule])
+  qrcode          QRCode         @relation(fields: [qrcode_id], references: [id_qrcode])
+}
+
+model QRCode {
+  id_qrcode   Int       @id @default(autoincrement())
+  token       String    @unique
+  est_actif   Boolean   @default(true)
+  etudiant_id String    @unique
+  paiement    Paiement?
+  etudiant    Etudiant  @relation(fields: [etudiant_id], references: [matricule])
+}
+
+model Entree {
+  id_entree   Int          @id @default(autoincrement())
+  statut      StatutEntree
+  date_entree DateTime     @default(now())
+  etudiant_id String
+  agent_id    Int
+  agent       User         @relation(fields: [agent_id], references: [id_user])
+  etudiant    Etudiant     @relation(fields: [etudiant_id], references: [matricule])
+}
+
+enum Role {
+  ADMIN
+  PRESIDENT
+  DELEGUE
+  AGENT
+}
+
+enum ModeClasse {
+  PRESENTIEL
+  HYBRIDE
+}
+
+enum StatutEntree {
+  VALIDE
+  REFUSE
+  DOUBLON
+}
+
+enum StatutPaiement {
+  EN_ATTENTE
+  PAYE
+  REFUSE
+}
