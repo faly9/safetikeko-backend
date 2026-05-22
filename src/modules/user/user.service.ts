@@ -2,7 +2,8 @@ import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { PrismaService } from '../../database/prisma.service'
 import * as bcrypt from 'bcrypt'
 import { JwtService } from '@nestjs/jwt'
-import { User } from '@prisma/client'
+import { User, Role } from '@prisma/client'
+
 @Injectable()
 export class UserService {
   constructor(
@@ -19,7 +20,7 @@ export class UserService {
       throw new UnauthorizedException('Pseudo incorrect')
     }
 
-    const match = await bcrypt.compare(password, user.mot_de_passe)
+    const match = await bcrypt.compare(password, user.password)
 
     if (!match) {
       throw new UnauthorizedException('Mot de passe incorrect')
@@ -42,5 +43,19 @@ export class UserService {
         role: user.role,
       },
     }
+  }
+
+  async create_user(pseudo: string, password: string, role: Role) {
+    const hashedPass = await bcrypt.hash(password, 10)
+
+    const user = await this.prisma.user.create({
+      data: {
+        pseudo,
+        password: hashedPass,
+        role,
+      },
+    })
+
+    return user
   }
 }

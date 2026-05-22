@@ -9,6 +9,6 @@ async function bootstrap() {
   app.setGlobalPrefix('api')
   app.useGlobalPipes(new ValidationPipe())
 
-  await app.listen(5000)
+  await app.listen(3000)
 }
-bootstrap()
+void bootstrap()
