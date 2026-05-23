@@ -18,13 +18,13 @@ export class UserController {
 
   @Post(SIGNIN)
   signin(@Body() dto: LoginUserDto) {
-    return this.userService.signin(dto.pseudo, dto.mot_de_passe)
+    return this.userService.signin(dto.pseudo, dto.password)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @Post(CREATE)
   create_user(@Body() dto: CreateUserDto) {
-    return this.userService.create_user(dto.pseudo, dto.mot_de_passe, dto.role)
+    return this.userService.create_user(dto.pseudo, dto.password, dto.role)
   }
 }

@@ -3,7 +3,7 @@ import { Role } from '@prisma/client'
 
 export class CreateUserDto {
   pseudo!: string
-  mot_de_passe!: string
+  password!: string
 
   @IsEnum(Role)
   role!: Role

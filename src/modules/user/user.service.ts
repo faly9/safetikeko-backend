@@ -20,7 +20,7 @@ export class UserService {
       throw new UnauthorizedException('Pseudo incorrect')
     }
 
-    const match = await bcrypt.compare(password, user.mot_de_passe)
+    const match = await bcrypt.compare(password, user.password)
 
     if (!match) {
       throw new UnauthorizedException('Mot de passe incorrect')
@@ -54,7 +54,7 @@ export class UserService {
     const user = await this.prisma.user.create({
       data: {
         pseudo,
-        mot_de_passe: hashedPass,
+        password: hashedPass,
         role,
       },
     })
