@@ -5,5 +5,5 @@ export class LoginUserDto {
   pseudo!: string
 
   @IsString()
-  password!: string
+  mot_de_passe!: string
 }
