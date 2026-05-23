@@ -47,7 +47,10 @@ export class UserService {
 
   async create_user(pseudo: string, password: string, role: Role) {
     const hashedPass = await bcrypt.hash(password, 10)
-
+    const user_existe = await this.prisma.user.findUnique({ where: { pseudo } })
+    if (user_existe) {
+      throw new UnauthorizedException('Ce pseudo est déjà pris')
+    }
     const user = await this.prisma.user.create({
       data: {
         pseudo,
