@@ -20,7 +20,7 @@ export class UserService {
       throw new UnauthorizedException('Pseudo incorrect')
     }
 
-    const match = await bcrypt.compare(password, user.password)
+    const match = await bcrypt.compare(password, user.mot_de_passe)
 
     if (!match) {
       throw new UnauthorizedException('Mot de passe incorrect')
@@ -47,11 +47,14 @@ export class UserService {
 
   async create_user(pseudo: string, password: string, role: Role) {
     const hashedPass = await bcrypt.hash(password, 10)
-
+    const user_existe = await this.prisma.user.findUnique({ where: { pseudo } })
+    if (user_existe) {
+      throw new UnauthorizedException('Ce pseudo est déjà pris')
+    }
     const user = await this.prisma.user.create({
       data: {
         pseudo,
-        password: hashedPass,
+        mot_de_passe: hashedPass,
         role,
       },
     })
