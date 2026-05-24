@@ -72,12 +72,12 @@ model Etudiant {
   photo       String?
 
   classe_id   Int
-  
-  table_id    Int
+
+  table_id    Int?
 
   classe      ClasseUniv   @relation(fields: [classe_id], references: [id_classe])
 
-  table       Table        @relation(fields: [table_id], references: [id_table])
+  table       Table?       @relation(fields: [table_id], references: [id_table])
 
   qrcode      QRCode?
 
