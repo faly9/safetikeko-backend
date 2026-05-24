@@ -9,9 +9,8 @@ datasource db {
 model Vague {
   id_vague   Int         @id @default(autoincrement())
   nom_vague  String
-  is_actif   Boolean     @default(true)
 
-  etudiants  Etudiant[]
+  ClasseUniv  ClasseUniv[]
 }
 
 model Filiere {
@@ -35,12 +34,15 @@ model ClasseUniv {
 
   filiere_id  Int
   niveau_id   Int
+  vague_id    Int
 
   delegue_id  Int?         @unique
 
   filiere     Filiere      @relation(fields: [filiere_id], references: [id_filiere])
 
   niveau      Niveau       @relation(fields: [niveau_id], references: [id_niveau])
+
+  vague       Vague        @relation(fields: [vague_id], references: [id_vague])
 
   delegue     User?        @relation("DelegueClasse", fields: [delegue_id], references: [id_user])
 
@@ -70,14 +72,12 @@ model Etudiant {
   photo       String?
 
   classe_id   Int
+  
   table_id    Int
-  vague_id    Int
 
   classe      ClasseUniv   @relation(fields: [classe_id], references: [id_classe])
 
   table       Table        @relation(fields: [table_id], references: [id_table])
-
-  vague       Vague        @relation(fields: [vague_id], references: [id_vague])
 
   qrcode      QRCode?
 
