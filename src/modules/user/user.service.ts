@@ -61,4 +61,52 @@ export class UserService {
 
     return user
   }
+  async get_all_users() {
+    const users = await this.prisma.user.findMany({
+      select: {
+        id_user: true,
+        pseudo: true,
+        role: true,
+      },
+    })
+
+    return users
+  }
+
+  async delete_user(id_user: number) {
+    try {
+      await this.prisma.user.delete({
+        where: { id_user },
+      })
+
+      return { message: 'Utilisateur supprimé' }
+    } catch {
+      return {
+        message: 'Utilisateur introuvable ou déjà supprimé',
+      }
+    }
+  }
+
+  async update_user(
+    id_user: number,
+    pseudo: string,
+    password: string,
+    role: Role,
+  ) {
+    const hashedPass = await bcrypt.hash(password, 10)
+    const user_existe = await this.prisma.user.findUnique({ where: { pseudo } })
+    if (user_existe && user_existe.id_user !== id_user) {
+      throw new UnauthorizedException('Ce pseudo est déjà pris')
+    }
+    const user = await this.prisma.user.update({
+      where: { id_user },
+      data: {
+        pseudo,
+        password: hashedPass,
+        role,
+      },
+    })
+
+    return user
+  }
 }

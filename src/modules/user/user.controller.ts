@@ -1,8 +1,14 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common'
+import { Controller, Post, Body, UseGuards, Get, Delete } from '@nestjs/common'
 
 import { UserService } from './user.service'
-import { USER, SIGNIN, CREATE } from '../../routes/user.routes'
-
+import {
+  USER,
+  SIGNIN,
+  CREATE,
+  GETALL_USERS,
+  DELETE_USER,
+  UPDATE_USER,
+} from '../../routes/user.routes'
 import { LoginUserDto } from './dto/login-user.dto'
 import { CreateUserDto } from './dto/create-user.Dto'
 
@@ -26,5 +32,31 @@ export class UserController {
   @Post(CREATE)
   create_user(@Body() dto: CreateUserDto) {
     return this.userService.create_user(dto.pseudo, dto.password, dto.role)
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @Get(GETALL_USERS)
+  get_all_users() {
+    return this.userService.get_all_users()
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @Delete(DELETE_USER)
+  delete_user(@Body('id_user') id_user: number) {
+    return this.userService.delete_user(id_user)
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @Post(UPDATE_USER)
+  update_user(
+    @Body('id_user') id_user: number,
+    @Body('pseudo') pseudo: string,
+    @Body('password') password: string,
+    @Body('role') role: Role,
+  ) {
+    return this.userService.update_user(id_user, pseudo, password, role)
   }
 }
