@@ -1,9 +1,9 @@
 import { Controller, Get, UseGuards } from '@nestjs/common'
 import { EtudiantService } from './etudiant.service'
-import { AuthGuard } from '@nestjs/passport'
 import { GETETUDIANT } from 'src/routes/user.routes'
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
 
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(JwtAuthGuard)
 @Controller('etudiant')
 export class EtudiantController {
   constructor(private readonly etudiantService: EtudiantService) {}
