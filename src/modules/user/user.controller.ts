@@ -8,6 +8,7 @@ import {
   GETALL_USERS,
   DELETE_USER,
   UPDATE_USER,
+  FINDDELEGUE,
 } from '../../routes/user.routes'
 import { LoginUserDto } from './dto/login-user.dto'
 import { CreateUserDto } from './dto/create-user.Dto'
@@ -58,5 +59,10 @@ export class UserController {
     @Body('role') role: Role,
   ) {
     return this.userService.update_user(id_user, pseudo, password, role)
+  }
+
+  @Get(FINDDELEGUE)
+  findDelegues() {
+    return this.userService.findDelegues()
   }
 }

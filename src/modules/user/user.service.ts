@@ -109,4 +109,12 @@ export class UserService {
 
     return user
   }
+
+  async findDelegues() {
+    return this.prisma.user.findMany({
+      where: {
+        role: 'DELEGUE',
+      },
+    })
+  }
 }
