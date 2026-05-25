@@ -38,7 +38,7 @@ model ClasseUniv {
 
   delegue_id  Int?         @unique
 
-  filiere     Filiere      @relation(fields: [filiere_id], references: [id_filiere])
+  filiere      Filiere      @relation(fields: [filiere_id], references: [id_filiere])
 
   niveau      Niveau       @relation(fields: [niveau_id], references: [id_niveau])
 
@@ -129,7 +129,7 @@ model Paiement {
 
   etudiant_id      String             @unique
 
-  qrcode_id        Int                @unique
+  qrcode_id        Int               @unique
 
   delegue_id       Int
 
