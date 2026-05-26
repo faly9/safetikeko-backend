@@ -28,3 +28,5 @@ export const FINDDELEGUE = 'get-delegues'
 export const GENQRCODE = 'gen-qrcode'
 
 export const GETQRCODE = 'get-qrcode'
+
+export const SCANQRCODE = 'scan-qrcode'

@@ -10,6 +10,7 @@ import { ClasseModule } from './modules/classe/classe.module'
 import { NiveauModule } from './modules/niveau/niveau.module'
 import { VagueModule } from './modules/vague/vague.module'
 import { QrcodeModule } from './modules/qrcode/qrcode.module'
+import { ScanModule } from './modules/scan/scan.module';
 @Module({
   imports: [
     UserModule,
@@ -21,6 +22,7 @@ import { QrcodeModule } from './modules/qrcode/qrcode.module'
     NiveauModule,
     VagueModule,
     QrcodeModule,
+    ScanModule,
   ],
   controllers: [AppController],
   providers: [AppService],
