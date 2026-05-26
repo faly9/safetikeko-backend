@@ -30,3 +30,11 @@ export const GENQRCODE = 'gen-qrcode'
 export const GETQRCODE = 'get-qrcode'
 
 export const SCANQRCODE = 'scan-qrcode'
+
+export const GETPAYEMENT = 'get-payement'
+
+export const GETTOTALMONTANT = 'get-montant'
+
+export const GETPARCLASSE = 'get-somme'
+
+export const GETCOUNTETUDIANT = 'get-count'
