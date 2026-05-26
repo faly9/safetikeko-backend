@@ -6,17 +6,26 @@ export class EtudiantService {
   constructor(private prisma: PrismaService) {}
 
   async findAll() {
-    return this.prisma.etudiant.findMany({
-      include: {
-        classe: {
-          include: {
-            filiere: true,
-            niveau: true,
-            vague: true,
+    const [etudiants, total] = await Promise.all([
+      this.prisma.etudiant.findMany({
+        include: {
+          classe: {
+            include: {
+              filiere: true,
+              niveau: true,
+              vague: true,
+            },
           },
+          table: true,
         },
-        table: true,
-      },
-    })
+      }),
+
+      this.prisma.etudiant.count(),
+    ])
+
+    return {
+      total,
+      data: etudiants,
+    }
   }
 }
