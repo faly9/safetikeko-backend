@@ -10,8 +10,8 @@ import { ClasseModule } from './modules/classe/classe.module'
 import { NiveauModule } from './modules/niveau/niveau.module'
 import { VagueModule } from './modules/vague/vague.module'
 import { QrcodeModule } from './modules/qrcode/qrcode.module'
-import { ScanModule } from './modules/scan/scan.module';
-import { PayementModule } from './modules/payement/payement.module';
+import { ScanModule } from './modules/scan/scan.module'
+import { PayementModule } from './modules/payement/payement.module'
 @Module({
   imports: [
     UserModule,
