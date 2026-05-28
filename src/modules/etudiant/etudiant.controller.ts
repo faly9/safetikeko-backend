@@ -1,5 +1,5 @@
 // import { Controller, Get, UseGuards } from '@nestjs/common'
-import { Get , Controller } from '@nestjs/common'
+import { Get, Controller } from '@nestjs/common'
 
 import { EtudiantService } from './etudiant.service'
 import { GETETUDIANT } from 'src/routes/user.routes'

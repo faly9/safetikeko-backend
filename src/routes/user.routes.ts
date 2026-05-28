@@ -18,6 +18,7 @@ export const GET_TABLE = 'get-table'
 
 export const GETCLASS = 'get-classe'
 export const CREATECLASS = 'create-classe'
+export const GETMYCLASSE = 'get-my-classe'
 
 export const GETNIVEAU = 'get-niveau'
 
