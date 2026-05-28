@@ -39,3 +39,5 @@ export const GETTOTALMONTANT = 'get-montant'
 export const GETPARCLASSE = 'get-somme'
 
 export const GETCOUNTETUDIANT = 'get-count'
+
+export const GETHISTOSCAN = 'get-histoscan/:agent_id'

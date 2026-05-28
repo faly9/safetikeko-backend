@@ -83,4 +83,43 @@ export class ScanService {
       data: { qrcode_id, agent_id, resultat, message },
     })
   }
+
+  async getHistorique(agent_id: number) {
+    const scans = await this.prisma.scan.findMany({
+      where: { agent_id },
+      orderBy: { date_scan: 'desc' },
+      include: {
+        qrcode: {
+          include: {
+            etudiant: {
+              include: {
+                classe: {
+                  include: {
+                    niveau: true, // ← FK niveau
+                    filiere: true, // ← FK filiere
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+
+    return scans.map((scan) => ({
+      id_scan: scan.id_scan,
+      date_scan: scan.date_scan,
+      resultat: scan.resultat,
+      message: scan.message,
+      etudiant: scan.qrcode.etudiant
+        ? {
+            matricule: scan.qrcode.etudiant.matricule,
+            nom: scan.qrcode.etudiant.nom,
+            prenom: scan.qrcode.etudiant.prenom,
+            niveau: scan.qrcode.etudiant.classe.niveau.nom,
+            filiere: scan.qrcode.etudiant.classe.filiere.nom,
+          }
+        : null,
+    }))
+  }
 }
