@@ -1,19 +1,52 @@
 // qrcode.controller.ts
-import { Body, Controller, Get, Post } from '@nestjs/common'
+
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common'
+
+import { Request } from 'express'
+
+import { Role, User } from '@prisma/client'
+
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
+import { RolesGuard } from 'src/common/guards/roles.guard'
+
+import { Roles } from 'src/common/decorators/roles.decorator'
+
 import { QrcodeService } from './qrcode.service'
-import { GENQRCODE, GETQRCODE } from 'src/routes/user.routes'
+
+import { ASSIGN_QRCODE, GENQRCODE, GETQRCODE } from 'src/routes/user.routes'
+
+import { AssignQrcodeDto } from '../classe/dto/assign-qrcode.dto'
+
+interface RequestWithUser extends Request {
+  user: User
+}
 
 @Controller('qrcode')
 export class QrcodeController {
   constructor(private readonly qrcodeService: QrcodeService) {}
 
   @Post(GENQRCODE)
-  generate(@Body() body: { quantity: number }) {
-    return this.qrcodeService.generateQRCodes(body.quantity)
+  async generate(@Body() body: { quantity: number }) {
+    return await this.qrcodeService.generateQRCodes(body.quantity)
   }
 
   @Get(GETQRCODE)
-  getAll() {
-    return this.qrcodeService.getAllQRCodes()
+  async getAll() {
+    return await this.qrcodeService.getAllQRCodes()
+  }
+
+  @Post(ASSIGN_QRCODE)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.DELEGUE)
+  async assignEtudiantToQrcode(
+    @Req() req: RequestWithUser,
+    @Body() dto: AssignQrcodeDto,
+  ) {
+    return await this.qrcodeService.assignEtudiantToQrcode(
+      req.user,
+      dto.matricule,
+      dto.token,
+      dto.photoBase64,
+    )
   }
 }

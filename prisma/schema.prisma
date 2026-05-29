@@ -111,7 +111,7 @@ model QRCode {
 
   etudiant_id     String?           @unique
 
-  etudiant        Etudiant?         @relation(fields: [etudiant_id], references: [matricule])
+  etudiant        Etudiant?         @relation(fields: [etudiant_id], references: [matricule], onDelete: SetNull)
 
   scans           Scan[]
 
