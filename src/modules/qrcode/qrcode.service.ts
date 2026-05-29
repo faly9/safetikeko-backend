@@ -126,4 +126,26 @@ export class QrcodeService {
       },
     }
   }
+
+  async getEtudiantByQr(token: string) {
+    const qrcode = await this.prisma.qRCode.findUnique({
+      where: { token },
+      include: {
+        etudiant: true,
+      },
+    })
+
+    if (!qrcode || !qrcode.etudiant) {
+      throw new NotFoundException('Étudiant introuvable')
+    }
+
+    const e = qrcode.etudiant
+
+    return {
+      matricule: e.matricule,
+      nom: e.nom,
+      prenom: e.prenom,
+      photo: e.photo,
+    }
+  }
 }

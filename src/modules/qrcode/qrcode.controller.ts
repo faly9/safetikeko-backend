@@ -1,6 +1,14 @@
 // qrcode.controller.ts
 
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  UseGuards,
+  Param,
+} from '@nestjs/common'
 
 import { Request } from 'express'
 
@@ -13,7 +21,12 @@ import { Roles } from 'src/common/decorators/roles.decorator'
 
 import { QrcodeService } from './qrcode.service'
 
-import { ASSIGN_QRCODE, GENQRCODE, GETQRCODE } from 'src/routes/user.routes'
+import {
+  ASSIGN_QRCODE,
+  GENQRCODE,
+  GETQRCODE,
+  GETETUDIANTBYTOKEN,
+} from 'src/routes/user.routes'
 
 import { AssignQrcodeDto } from '../classe/dto/assign-qrcode.dto'
 
@@ -48,5 +61,10 @@ export class QrcodeController {
       dto.token,
       dto.photoBase64,
     )
+  }
+
+  @Get(GETETUDIANTBYTOKEN)
+  getEtudiant(@Param('token') token: string) {
+    return this.qrcodeService.getEtudiantByQr(token)
   }
 }

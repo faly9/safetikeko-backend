@@ -13,16 +13,24 @@ export class PayementService {
   constructor(private prisma: PrismaService) {}
 
   async findPaiement() {
-    const paiements = await this.prisma.paiement.findMany({
+    return this.prisma.paiement.findMany({
       include: {
-        etudiant: true,
+        etudiant: {
+          include: {
+            table: true,
+            classe: {
+              include: {
+                niveau: true,
+                filiere: true,
+              },
+            },
+          },
+        },
         qrcode: true,
         delegue: true,
       },
     })
-    return paiements
   }
-
   async getTotalMontant() {
     const [totalMontant, nombrePaiements] = await Promise.all([
       this.prisma.paiement.aggregate({
