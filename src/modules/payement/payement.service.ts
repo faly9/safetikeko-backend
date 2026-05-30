@@ -18,12 +18,6 @@ export class PayementService {
         etudiant: {
           include: {
             table: true,
-            classe: {
-              include: {
-                niveau: true,
-                filiere: true,
-              },
-            },
           },
         },
         qrcode: true,

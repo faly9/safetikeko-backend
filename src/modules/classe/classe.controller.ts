@@ -21,11 +21,15 @@ export class ClasseController {
   constructor(private readonly classeService: ClasseService) {}
 
   @Get(GETCLASS)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   findAll() {
     return this.classeService.findAll()
   }
 
   @Post(CREATECLASS)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   createClasse(@Body() body: CreateClasseDto) {
     return this.classeService.createClasse(body)
   }
