@@ -131,7 +131,11 @@ export class QrcodeService {
     const qrcode = await this.prisma.qRCode.findUnique({
       where: { token },
       include: {
-        etudiant: true,
+        etudiant: {
+          include: {
+            table: true,
+          },
+        },
       },
     })
 
@@ -146,6 +150,7 @@ export class QrcodeService {
       nom: e.nom,
       prenom: e.prenom,
       photo: e.photo,
+      table: e.table.num_table,
     }
   }
 }
