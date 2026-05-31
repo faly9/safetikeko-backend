@@ -24,12 +24,15 @@ export class ClasseController {
 
   // PUBLIC — pas de guard
   @Get(GETCLASS)
-  findAll(@Query('niveau_id') niveauId?: string) {
-    return this.classeService.findAll(niveauId ? Number(niveauId) : undefined)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  findAll() {
+    return this.classeService.findAll()
   }
 
   @Post(CREATECLASS)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   createClasse(@Body() body: CreateClasseDto) {
     return this.classeService.createClasse(body)
   }
