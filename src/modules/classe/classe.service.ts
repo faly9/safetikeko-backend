@@ -6,13 +6,19 @@ import { User } from '@prisma/client'
 export class ClasseService {
   constructor(private prisma: PrismaService) {}
 
-  async findAll() {
+  async findAll(niveauId?: number) {
     return this.prisma.classeUniv.findMany({
+      where: niveauId ? { niveau_id: niveauId } : undefined,
       include: {
         filiere: true,
         niveau: true,
         vague: true,
-        delegue: true,
+        delegue: {
+          select: { id_user: true, pseudo: true, role: true },
+        },
+        etudiants: {
+          select: { matricule: true },
+        },
       },
     })
   }
@@ -109,4 +115,5 @@ export class ClasseService {
         },
       },
     })
-  }}
+  }
+}

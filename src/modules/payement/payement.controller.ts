@@ -1,18 +1,25 @@
 import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common'
-import { Role, User } from '@prisma/client'
+import { Role } from '@prisma/client'
+import type { User } from '@prisma/client'
 import { Request } from 'express'
+
 import { Roles } from 'src/common/decorators/roles.decorator'
+
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
 import { RolesGuard } from 'src/common/guards/roles.guard'
+
 import { PayementService } from './payement.service'
+import { AssignPayementDto } from './dto/assign-payement.dto'
+
 import {
   ASSIGN_PAYEMENT,
+  GETETUDIANTPAYE,
   GETPARCLASSE,
   GETPAYEMENT,
   GETTOTALMONTANT,
-  GETETUDIANTPAYE,
+  GETETUDIANTPAYEPARCLASSE,
+  GETETUDIANTPAYEGLOBAL,
 } from 'src/routes/user.routes'
-import { AssignPayementDto } from './dto/assign-payement.dto'
 
 interface RequestWithUser extends Request {
   user: User
@@ -21,8 +28,9 @@ interface RequestWithUser extends Request {
 @Controller('payement')
 export class PayementController {
   constructor(private readonly payementService: PayementService) {}
+
   @Get(GETPAYEMENT)
-  Getallpaiement() {
+  getAllPaiement() {
     return this.payementService.findPaiement()
   }
 
@@ -32,12 +40,24 @@ export class PayementController {
   }
 
   @Get(GETPARCLASSE)
-  getTotalClasse() {
-    return this.payementService.getTotalByClasse()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.DELEGUE)
+  getTotalByClasse(@Req() req: RequestWithUser) {
+    return this.payementService.getTotalByClasse(req.user.id_user)
   }
+
   @Get(GETETUDIANTPAYE)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.DELEGUE)
   getEtudiantsPayes() {
     return this.payementService.getEtudiantsPayes()
+  }
+
+  @Get(GETETUDIANTPAYEPARCLASSE)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.DELEGUE)
+  getEtudiantsPayesPerClasse(@Req() req: RequestWithUser) {
+    return this.payementService.getEtudiantsPayesPerClasse(req.user.id_user)
   }
 
   @Post(ASSIGN_PAYEMENT)
@@ -52,5 +72,12 @@ export class PayementController {
       dto.matricule,
       dto.montant,
     )
+  }
+
+  @Get(GETETUDIANTPAYEGLOBAL) // nouvelle constante
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.PRESIDENT) // PRESIDENT seulement
+  getEtudiantsPayesGlobal() {
+    return this.payementService.getEtudiantsPayesGlobal()
   }
 }
