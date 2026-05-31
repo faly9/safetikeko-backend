@@ -37,6 +37,7 @@ export const SCANQRCODE = 'scan-qrcode'
 export const GETPAYEMENT = 'get-payement'
 export const GETETUDIANTPAYE = 'get-etudiant-paye'
 export const GETETUDIANTPAYEPARCLASSE = 'get-etudiant-paye-per-classe'
+
 // user.routes.ts — ajouter
 export const GETETUDIANTPAYEGLOBAL = 'etudiants-payes-global'
 export const ASSIGN_PAYEMENT = 'assign'
@@ -45,10 +46,12 @@ export const GET_TABLE_BY_CLASSE_ID = 'classe/:classeId'
 
 export const GETTOTALMONTANT = 'get-montant'
 
-export const GETPARCLASSE = 'get-somme'
-
 export const GETCOUNTETUDIANT = 'get-count'
 
 export const GETHISTOSCAN = 'get-histoscan/:agent_id'
 
 export const GETETUDIANTBYTOKEN = 'getetudiantbytoken/:token'
+
+export const ADMINCLASSE = 'get-classe-admin'
+
+export const GETPARCLASSE = 'get-somme'

@@ -273,4 +273,54 @@ export class PayementService {
       total_etudiants_classe: p.etudiant?.classe?.etudiants?.length ?? 0,
     }))
   }
+
+  async getTotalByClassedashboard() {
+    const paiements = await this.prisma.paiement.findMany({
+      include: {
+        etudiant: {
+          include: {
+            classe: {
+              include: {
+                niveau: true,
+                filiere: true,
+              },
+            },
+          },
+        },
+      },
+    })
+
+    const result: Record<
+      number,
+      {
+        id_classe: number
+        niveau: string
+        mode: 'PRESENTIEL' | 'HYBRIDE'
+        filiere: string
+        total: number
+        count: number
+      }
+    > = {}
+
+    for (const p of paiements) {
+      const classe = p.etudiant.classe
+      const id = classe.id_classe
+
+      if (!result[id]) {
+        result[id] = {
+          id_classe: id,
+          niveau: classe.niveau?.nom ?? 'N/A',
+          mode: classe.mode,
+          filiere: classe.filiere?.nom ?? 'N/A',
+          total: 0,
+          count: 0,
+        }
+      }
+
+      result[id].total += p.montant
+      result[id].count += 1
+    }
+
+    return Object.values(result)
+  }
 }
