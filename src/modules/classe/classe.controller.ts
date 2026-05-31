@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  UseGuards,
-  Req,
-  Query,
-} from '@nestjs/common'
+import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common'
 import { Request } from 'express'
 import { Role, User } from '@prisma/client'
 
@@ -17,7 +9,6 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
 import { RolesGuard } from 'src/common/guards/roles.guard'
 import { Roles } from 'src/common/decorators/roles.decorator'
 
-// ⚠️  Plus de @UseGuards global ici — GETCLASS est public
 @Controller('classe')
 export class ClasseController {
   constructor(private readonly classeService: ClasseService) {}
