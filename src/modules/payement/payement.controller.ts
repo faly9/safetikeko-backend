@@ -16,6 +16,7 @@ import {
   GETETUDIANTPAYE,
   GETPARCLASSE,
   GETPAYEMENT,
+  ADMINCLASSE,
   GETTOTALMONTANT,
   GETETUDIANTPAYEPARCLASSE,
   GETETUDIANTPAYEGLOBAL,
@@ -37,6 +38,11 @@ export class PayementController {
   @Get(GETTOTALMONTANT)
   getTotalMontant() {
     return this.payementService.getTotalMontant()
+  }
+
+  @Get(ADMINCLASSE)
+  getTotalClasse() {
+    return this.payementService.getTotalByClassedashboard()
   }
 
   @Get(GETPARCLASSE)
