@@ -36,8 +36,12 @@ export const SCANQRCODE = 'scan-qrcode'
 
 export const GETPAYEMENT = 'get-payement'
 export const GETETUDIANTPAYE = 'get-etudiant-paye'
-
+export const GETETUDIANTPAYEPARCLASSE = 'get-etudiant-paye-per-classe'
+// user.routes.ts — ajouter
+export const GETETUDIANTPAYEGLOBAL = 'etudiants-payes-global'
 export const ASSIGN_PAYEMENT = 'assign'
+export const ASSIGN_TABLE = 'assign-etudiants'
+export const GET_TABLE_BY_CLASSE_ID = 'classe/:classeId'
 
 export const GETTOTALMONTANT = 'get-montant'
 

@@ -40,54 +40,44 @@ export class PayementService {
       salaire: nombrePaiements * 800,
     }
   }
-  async getTotalByClasse() {
-    const paiements = await this.prisma.paiement.findMany({
+  async getTotalByClasse(idUser: number) {
+    const classe = await this.prisma.classeUniv.findUnique({
+      where: {
+        delegue_id: idUser,
+      },
       include: {
-        etudiant: {
-          include: {
-            classe: {
-              include: {
-                niveau: true,
-                filiere: true,
-              },
-            },
-          },
-        },
+        niveau: true,
+        filiere: true,
       },
     })
 
-    const result: Record<
-      number,
-      {
-        id_classe: number
-        niveau: string
-        mode: 'PRESENTIEL' | 'HYBRIDE'
-        filiere: string
-        total: number
-        count: number
-      }
-    > = {}
-
-    for (const p of paiements) {
-      const classe = p.etudiant.classe
-      const id = classe.id_classe
-
-      if (!result[id]) {
-        result[id] = {
-          id_classe: id,
-          niveau: classe.niveau?.nom ?? 'N/A',
-          mode: classe.mode,
-          filiere: classe.filiere?.nom ?? 'N/A',
-          total: 0,
-          count: 0,
-        }
-      }
-
-      result[id].total += p.montant
-      result[id].count += 1
+    if (!classe) {
+      throw new NotFoundException('Aucune classe assignée à ce délégué')
     }
 
-    return Object.values(result)
+    const stats = await this.prisma.paiement.aggregate({
+      where: {
+        etudiant: {
+          classe_id: classe.id_classe,
+        },
+      },
+      _sum: {
+        montant: true,
+      },
+      _count: {
+        id_paiement: true,
+      },
+    })
+
+    return {
+      id_classe: classe.id_classe,
+      niveau: classe.niveau?.nom ?? 'N/A',
+      filiere: classe.filiere?.nom ?? 'N/A',
+      mode: classe.mode,
+      total: stats._sum.montant ?? 0,
+      count: stats._count.id_paiement ?? 0,
+      salaire: (stats._count.id_paiement ?? 0) * 800,
+    }
   }
 
   // Asignation d'un paiement à un étudiant après assignation du QR Code
@@ -189,6 +179,96 @@ export class PayementService {
       filiere: p.etudiant.classe?.filiere?.nom,
       montant: p.montant,
       date: p.date_paiement,
+    }))
+  }
+
+  async getEtudiantsPayesPerClasse(idUser: number) {
+    const classe = await this.prisma.classeUniv.findUnique({
+      where: {
+        delegue_id: idUser,
+      },
+    })
+
+    if (!classe) {
+      throw new NotFoundException('Aucune classe assignée à ce délégué')
+    }
+
+    const paiements = await this.prisma.paiement.findMany({
+      where: {
+        etudiant: {
+          classe_id: classe.id_classe,
+        },
+      },
+      include: {
+        etudiant: {
+          include: {
+            classe: {
+              include: {
+                niveau: true,
+                filiere: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        date_paiement: 'desc',
+      },
+    })
+
+    return paiements.map((p) => ({
+      id_paiement: p.id_paiement,
+      matricule: p.etudiant.matricule,
+      nom: p.etudiant.nom,
+      prenom: p.etudiant.prenom,
+      photo: p.etudiant.photo,
+      classe: p.etudiant.classe?.id_classe,
+      niveau: p.etudiant.classe?.niveau?.nom,
+      filiere: p.etudiant.classe?.filiere?.nom,
+      montant: p.montant,
+      date: p.date_paiement,
+    }))
+  }
+
+  // payement.service.ts
+  async getEtudiantsPayesGlobal() {
+    const paiements = await this.prisma.paiement.findMany({
+      include: {
+        etudiant: {
+          select: {
+            matricule: true,
+            nom: true,
+            prenom: true,
+            photo: true,
+            classe_id: true,
+            classe: {
+              select: {
+                niveau: { select: { nom: true } },
+                filiere: { select: { nom: true } },
+                mode: true,
+                etudiants: { select: { matricule: true } },
+              },
+            },
+          },
+        },
+      },
+    })
+
+    return paiements.map((p) => ({
+      matricule: p.etudiant?.matricule ?? '',
+      nom: p.etudiant?.nom ?? '',
+      prenom: p.etudiant?.prenom ?? '',
+      photo: p.etudiant?.photo ?? null,
+      montant: p.montant,
+      classe_id: p.etudiant?.classe_id ?? null,
+      classe_label: [
+        p.etudiant?.classe?.niveau?.nom,
+        p.etudiant?.classe?.filiere?.nom,
+        p.etudiant?.classe?.mode?.[0],
+      ]
+        .filter(Boolean)
+        .join('-'),
+      total_etudiants_classe: p.etudiant?.classe?.etudiants?.length ?? 0,
     }))
   }
 }
