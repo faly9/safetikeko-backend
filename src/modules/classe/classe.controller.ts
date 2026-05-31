@@ -15,8 +15,7 @@ export class ClasseController {
 
   // PUBLIC — pas de guard
   @Get(GETCLASS)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard)
   findAll() {
     return this.classeService.findAll()
   }
