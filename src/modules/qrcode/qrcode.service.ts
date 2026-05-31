@@ -150,7 +150,7 @@ export class QrcodeService {
       nom: e.nom,
       prenom: e.prenom,
       photo: e.photo,
-      table: e.table.num_table,
+      table: e.table?.id_table,
     }
   }
 }
