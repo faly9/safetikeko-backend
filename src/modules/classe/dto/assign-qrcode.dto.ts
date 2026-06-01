@@ -3,7 +3,7 @@ import { IsNotEmpty, IsOptional, IsString } from 'class-validator'
 export class AssignQrcodeDto {
   @IsString()
   @IsNotEmpty()
-  matricule!: string
+  id_etudiant!: number
 
   @IsString()
   @IsNotEmpty()

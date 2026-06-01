@@ -7,155 +7,104 @@ datasource db {
 }
 
 model Vague {
-  id_vague   Int         @id @default(autoincrement())
+  id_vague   Int          @id @default(autoincrement())
   nom_vague  String
-
-  ClasseUniv  ClasseUniv[]
+  ClasseUniv ClasseUniv[]
 }
 
 model Filiere {
   id_filiere Int          @id @default(autoincrement())
   nom        String
-
   classes    ClasseUniv[]
 }
 
 model Niveau {
-  id_niveau  Int          @id @default(autoincrement())
-  nom        String
-
-  classes    ClasseUniv[]
+  id_niveau Int          @id @default(autoincrement())
+  nom       String
+  classes   ClasseUniv[]
 }
 
 model ClasseUniv {
-  id_classe   Int          @id @default(autoincrement())
-
-  mode        ModeClasse
-
-  filiere_id  Int
-  niveau_id   Int
-  vague_id    Int
-
-  delegue_id  Int?         @unique
-
-  filiere      Filiere      @relation(fields: [filiere_id], references: [id_filiere])
-
-  niveau      Niveau       @relation(fields: [niveau_id], references: [id_niveau])
-
-  vague       Vague        @relation(fields: [vague_id], references: [id_vague])
-
-  delegue     User?        @relation("DelegueClasse", fields: [delegue_id], references: [id_user])
-
-  tables      Table[]
-  etudiants   Etudiant[]
+  id_classe  Int        @id @default(autoincrement())
+  mode       ModeClasse
+  delegue_id Int?       @unique
+  filiere_id Int
+  niveau_id  Int
+  vague_id   Int
+  delegue    User?      @relation("DelegueClasse", fields: [delegue_id], references: [id_user])
+  filiere    Filiere    @relation(fields: [filiere_id], references: [id_filiere])
+  niveau     Niveau     @relation(fields: [niveau_id], references: [id_niveau])
+  vague      Vague      @relation(fields: [vague_id], references: [id_vague])
+  etudiants  Etudiant[]
+  tables     Table[]
 }
 
 model Table {
-  id_table    Int          @id @default(autoincrement())
-
-  num_table   String
-  capacite    Int          @default(8)
-
-  classe_id   Int
-
-  classe      ClasseUniv   @relation(fields: [classe_id], references: [id_classe])
-
-  etudiants   Etudiant[]
+  id_table  Int        @id @default(autoincrement())
+  num_table String
+  classe_id Int
+  capacite  Int        @default(8)
+  etudiants Etudiant[]
+  classe    ClasseUniv @relation(fields: [classe_id], references: [id_classe])
 }
 
 model Etudiant {
-  matricule   String       @id
-
+  matricule   String
   nom         String
   prenom      String
-
   photo       String?
-
   classe_id   Int
-
   table_id    Int?
-
-  classe      ClasseUniv   @relation(fields: [classe_id], references: [id_classe])
-
-  table       Table?       @relation(fields: [table_id], references: [id_table])
-
-  qrcode      QRCode?
-
+  id_etudiant Int        @id @default(autoincrement())
+  classe      ClasseUniv @relation(fields: [classe_id], references: [id_classe])
+  table       Table?     @relation(fields: [table_id], references: [id_table])
   paiement    Paiement?
+  qrcode      QRCode?
 }
 
 model User {
-  id_user         Int           @id @default(autoincrement())
-
-  pseudo          String        @unique
-
-  password        String
-
-  role            Role
-
-  classeDelegue   ClasseUniv?   @relation("DelegueClasse")
-
-  scans           Scan[]
-
-  paiements       Paiement[]
+  id_user       Int         @id @default(autoincrement())
+  pseudo        String      @unique
+  role          Role
+  password      String
+  classeDelegue ClasseUniv? @relation("DelegueClasse")
+  paiements     Paiement[]
+  scans         Scan[]
 }
 
 model QRCode {
-  id_qrcode       Int               @id @default(autoincrement())
-
-  token           String            @unique
-
-  statut          Status_QRCode     @default(INACTIF)
-
-  date_creation   DateTime          @default(now())
-
-  etudiant_id     String?           @unique
-
-  etudiant        Etudiant?         @relation(fields: [etudiant_id], references: [matricule], onDelete: SetNull)
-
-  scans           Scan[]
-
-  paiement        Paiement?
+  id_qrcode     Int           @id @default(autoincrement())
+  token         String        @unique
+  statut        Status_QRCode @default(INACTIF)
+  date_creation DateTime      @default(now())
+  etudiant_id   Int?          @unique
+  paiement      Paiement?
+  etudiant      Etudiant?     @relation(fields: [etudiant_id], references: [id_etudiant])
+  scans         Scan[]
 }
 
 model Paiement {
-  id_paiement      Int                @id @default(autoincrement())
-
-  montant          Float
-
-  date_paiement    DateTime           @default(now())
-
-  statut_paiement  StatutPaiement     @default(PAYE)
-
-  etudiant_id      String             @unique
-
-  qrcode_id        Int               @unique
-
-  delegue_id       Int
-
-  etudiant         Etudiant           @relation(fields: [etudiant_id], references: [matricule])
-
-  qrcode           QRCode             @relation(fields: [qrcode_id], references: [id_qrcode])
-
-  delegue          User               @relation(fields: [delegue_id], references: [id_user])
+  id_paiement     Int            @id @default(autoincrement())
+  montant         Float
+  date_paiement   DateTime       @default(now())
+  statut_paiement StatutPaiement @default(PAYE)
+  delegue_id      Int
+  qrcode_id       Int            @unique
+  etudiant_id     Int            @unique
+  delegue         User           @relation(fields: [delegue_id], references: [id_user])
+  etudiant        Etudiant       @relation(fields: [etudiant_id], references: [id_etudiant])
+  qrcode          QRCode         @relation(fields: [qrcode_id], references: [id_qrcode])
 }
 
 model Scan {
-  id_scan          Int                @id @default(autoincrement())
-
-  date_scan        DateTime           @default(now())
-
-  resultat         ResultatScan
-
-  message          String?
-
-  qrcode_id        Int
-
-  agent_id         Int
-
-  qrcode           QRCode             @relation(fields: [qrcode_id], references: [id_qrcode])
-
-  agent            User               @relation(fields: [agent_id], references: [id_user])
+  id_scan   Int          @id @default(autoincrement())
+  date_scan DateTime     @default(now())
+  resultat  ResultatScan
+  message   String?
+  qrcode_id Int
+  agent_id  Int
+  agent     User         @relation(fields: [agent_id], references: [id_user])
+  qrcode    QRCode       @relation(fields: [qrcode_id], references: [id_qrcode])
 }
 
 enum Role {

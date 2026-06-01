@@ -29,7 +29,7 @@ export class TableService {
   }
 
   // table.service.ts
-  async assignOneEtudiantToTable(matricule: string, tableId: number) {
+  async assignOneEtudiantToTable(id_etudiant: number, tableId: number) {
     const table = await this.prisma.table.findUnique({
       where: { id_table: tableId },
       include: { etudiants: true },
@@ -41,8 +41,16 @@ export class TableService {
       throw new Error('Table pleine')
     }
 
+    const etudiant = await this.prisma.etudiant.findFirst({
+      where: { id_etudiant },
+    })
+
+    if (!etudiant) {
+      throw new Error('Étudiant non trouvé')
+    }
+
     await this.prisma.etudiant.update({
-      where: { matricule },
+      where: { id_etudiant: etudiant.id_etudiant },
       data: { table_id: tableId },
     })
 

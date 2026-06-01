@@ -75,7 +75,7 @@ export class PayementController {
   ) {
     return this.payementService.assignPaiementToEtudiant(
       req.user,
-      dto.matricule,
+      dto.id_etudiant,
       dto.montant,
     )
   }

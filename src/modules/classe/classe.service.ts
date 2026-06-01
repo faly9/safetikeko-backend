@@ -17,7 +17,7 @@ export class ClasseService {
           select: { id_user: true, pseudo: true, role: true },
         },
         etudiants: {
-          select: { matricule: true },
+          select: { id_etudiant: true },
         },
       },
     })
@@ -107,6 +107,7 @@ export class ClasseService {
 
         etudiants: {
           select: {
+            id_etudiant: true,
             matricule: true,
             nom: true,
             prenom: true,

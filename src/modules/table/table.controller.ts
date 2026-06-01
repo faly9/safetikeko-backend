@@ -36,10 +36,10 @@ export class TableController {
   // Assignation automatique des étudiants dans les tables
   @Post(ASSIGN_TABLE)
   async assignTableToEtudiant(
-    @Body() body: { matricule: string; tableId: number },
+    @Body() body: { id_etudiant: number; tableId: number },
   ) {
     return this.tableService.assignOneEtudiantToTable(
-      body.matricule,
+      body.id_etudiant,
       body.tableId,
     )
   }

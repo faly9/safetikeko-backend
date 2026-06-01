@@ -85,7 +85,7 @@ export class PayementService {
   // Asignation d'un paiement à un étudiant après assignation du QR Code
   async assignPaiementToEtudiant(
     user: User,
-    matricule: string,
+    id_etudiant: number,
     montant: number,
   ) {
     if (user.role !== Role.DELEGUE) {
@@ -108,7 +108,7 @@ export class PayementService {
 
     const etudiant = await this.prisma.etudiant.findFirst({
       where: {
-        matricule,
+        id_etudiant,
         classe_id: classe.id_classe,
       },
       include: {
@@ -134,7 +134,7 @@ export class PayementService {
     const paiement = await this.prisma.paiement.create({
       data: {
         montant,
-        etudiant_id: etudiant.matricule,
+        etudiant_id: etudiant.id_etudiant,
         qrcode_id: etudiant.qrcode.id_qrcode,
         delegue_id: user.id_user,
       },
@@ -172,7 +172,7 @@ export class PayementService {
 
     return paiements.map((p) => ({
       id_paiement: p.id_paiement,
-      matricule: p.etudiant.matricule,
+      id_etudiant: p.etudiant.id_etudiant,
       nom: p.etudiant.nom,
       prenom: p.etudiant.prenom,
       photo: p.etudiant.photo,
