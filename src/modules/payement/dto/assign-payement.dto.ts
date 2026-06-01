@@ -1,7 +1,7 @@
-import { IsNotEmpty, IsNumber, IsString, Min } from 'class-validator'
+import { IsNotEmpty, IsNumber, Min } from 'class-validator'
 
 export class AssignPayementDto {
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
   id_etudiant!: number
 

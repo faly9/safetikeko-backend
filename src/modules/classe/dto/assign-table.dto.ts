@@ -1,4 +1,4 @@
 export class AssignTableDto {
-  matricule?: string
+  id_etudiant?: number
   tableId?: number
 }
