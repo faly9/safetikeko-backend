@@ -113,6 +113,7 @@ export class ScanService {
       message: scan.message,
       etudiant: scan.qrcode.etudiant
         ? {
+            id_etudiant: scan.qrcode.etudiant.id_etudiant,
             matricule: scan.qrcode.etudiant.matricule,
             nom: scan.qrcode.etudiant.nom,
             prenom: scan.qrcode.etudiant.prenom,

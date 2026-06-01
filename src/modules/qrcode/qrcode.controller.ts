@@ -57,7 +57,7 @@ export class QrcodeController {
   ) {
     return await this.qrcodeService.assignEtudiantToQrcode(
       req.user,
-      dto.matricule,
+      dto.id_etudiant,
       dto.token,
       dto.photoBase64,
     )

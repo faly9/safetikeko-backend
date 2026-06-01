@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from 'src/database/prisma.service'
-import { User } from '@prisma/client'
+import { User, Etudiant } from '@prisma/client'
 import {
   BadRequestException,
   ForbiddenException,
@@ -37,7 +37,7 @@ export class EtudiantService {
   // Assignation étudiant -> QRCode par délégué connecté
   async assignEtudiantToQrcode(
     user: User,
-    matricule: string,
+    id_etudiant: number,
     token: string,
     photoBase64?: string,
   ) {
@@ -60,7 +60,7 @@ export class EtudiantService {
     // Recherche étudiant dans SA classe
     const etudiant = await this.prisma.etudiant.findFirst({
       where: {
-        matricule,
+        id_etudiant,
         classe_id: classe.id_classe,
       },
 
@@ -98,7 +98,7 @@ export class EtudiantService {
     if (photoBase64) {
       await this.prisma.etudiant.update({
         where: {
-          matricule,
+          id_etudiant: Number(etudiant.id_etudiant),
         },
 
         data: {
@@ -114,7 +114,7 @@ export class EtudiantService {
       },
 
       data: {
-        etudiant_id: matricule,
+        etudiant_id: Number(etudiant.id_etudiant),
         statut: 'VALIDE',
       },
 
@@ -123,6 +123,13 @@ export class EtudiantService {
       },
     })
 
+    // explicitly type the result to help TS understand etudiant shape
+    const qrResult: {
+      token: string
+      statut: string
+      etudiant: Etudiant | null
+    } = qrAssigned
+
     return {
       message: 'QR Code assigné avec succès',
 
@@ -130,12 +137,15 @@ export class EtudiantService {
         token: qrAssigned.token,
         statut: qrAssigned.statut,
 
-        etudiant: {
-          matricule: qrAssigned.etudiant?.matricule,
-          nom: qrAssigned.etudiant?.nom,
-          prenom: qrAssigned.etudiant?.prenom,
-          photo: qrAssigned.etudiant?.photo,
-        },
+        etudiant: qrResult.etudiant
+          ? {
+              id_etudiant: qrResult.etudiant.id_etudiant,
+              matricule: qrResult.etudiant.matricule,
+              nom: qrResult.etudiant.nom,
+              prenom: qrResult.etudiant.prenom,
+              photo: qrResult.etudiant.photo,
+            }
+          : null,
       },
     }
   }

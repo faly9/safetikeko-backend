@@ -36,7 +36,7 @@ export class QrcodeService {
 
   async assignEtudiantToQrcode(
     user: User,
-    matricule: string,
+    id_etudiant: number,
     token: string,
     photoBase64?: string,
   ) {
@@ -56,7 +56,7 @@ export class QrcodeService {
 
     const etudiant = await this.prisma.etudiant.findFirst({
       where: {
-        matricule,
+        id_etudiant: id_etudiant,
         classe_id: classe.id_classe,
       },
       include: {
@@ -73,9 +73,7 @@ export class QrcodeService {
     }
 
     const qrcode = await this.prisma.qRCode.findUnique({
-      where: {
-        token,
-      },
+      where: { token },
     })
 
     if (!qrcode) {
@@ -90,7 +88,7 @@ export class QrcodeService {
       if (photoBase64) {
         await tx.etudiant.update({
           where: {
-            matricule,
+            id_etudiant: Number(etudiant.id_etudiant),
           },
           data: {
             photo: photoBase64,
@@ -99,11 +97,9 @@ export class QrcodeService {
       }
 
       return tx.qRCode.update({
-        where: {
-          token,
-        },
+        where: { id_qrcode: qrcode.id_qrcode },
         data: {
-          etudiant_id: matricule,
+          etudiant_id: etudiant.id_etudiant,
           statut: Status_QRCode.VALIDE,
         },
         include: {
@@ -118,7 +114,7 @@ export class QrcodeService {
         token: qrAssigned.token,
         statut: qrAssigned.statut,
         etudiant: {
-          matricule: qrAssigned.etudiant?.matricule,
+          id_etudiant: qrAssigned.etudiant?.id_etudiant,
           nom: qrAssigned.etudiant?.nom,
           prenom: qrAssigned.etudiant?.prenom,
           photo: qrAssigned.etudiant?.photo,
@@ -146,6 +142,7 @@ export class QrcodeService {
     const e = qrcode.etudiant
 
     return {
+      id_etudiant: e.id_etudiant,
       matricule: e.matricule,
       nom: e.nom,
       prenom: e.prenom,
