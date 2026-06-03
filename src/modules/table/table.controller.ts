@@ -1,13 +1,22 @@
-import { Body, Controller, Get, Post, UseGuards, Param } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  UseGuards,
+  Param,
+  Query,
+} from '@nestjs/common'
 
 import { TableService } from './table.service'
 import { CreateTableDto } from './dto/create_table.dto'
 
 import {
   CREATE_TABLE,
-  GET_TABLE,
   ASSIGN_TABLE,
   GET_TABLE_BY_CLASSE_ID,
+  GET_TABLE_STATS,
+  GET_TABLE,
 } from 'src/routes/user.routes'
 
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
@@ -21,19 +30,29 @@ export class TableController {
   async create(@Body() createTableDto: CreateTableDto) {
     return this.tableService.createTable(createTableDto)
   }
-
   @Get(GET_TABLE)
-  async get_table() {
-    return this.tableService.getTable()
+  async get_tableALL() {
+    return this.tableService.getTableALL()
   }
 
-  //  GET tables by classe
+  @Get(GET_TABLE_STATS)
+  async getStats(
+    @Query('niveau_id') niveauId?: string,
+    @Query('filiere_id') filiereId?: string,
+    @Query('classe_id') classeId?: string,
+  ) {
+    return this.tableService.getTableStats({
+      niveau_id: niveauId ? parseInt(niveauId) : undefined,
+      filiere_id: filiereId ? parseInt(filiereId) : undefined,
+      classe_id: classeId ? parseInt(classeId) : undefined,
+    })
+  }
+
   @Get(GET_TABLE_BY_CLASSE_ID)
   async getTablesByClasse(@Param('classeId') classeId: string) {
     return this.tableService.getTablesByClasse(Number(classeId))
   }
 
-  // Assignation automatique des étudiants dans les tables
   @Post(ASSIGN_TABLE)
   async assignTableToEtudiant(
     @Body() body: { id_etudiant: number; tableId: number },
