@@ -10,7 +10,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api')
 
   app.use(bodyParser.json({ limit: '10mb' }))
-  app.use(bodyParser.urlencoded({ extended: true }))
+  app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }))
 
   app.useGlobalPipes(new ValidationPipe())
 
@@ -19,9 +19,7 @@ async function bootstrap() {
     credentials: true,
   })
 
-  const port = process.env.PORT || 3000
-
-  await app.listen(port, '0.0.0.0')
+  await app.listen(5000, '0.0.0.0')
 }
 
 void bootstrap()
