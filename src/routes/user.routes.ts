@@ -43,6 +43,7 @@ export const GETETUDIANTPAYEGLOBAL = 'etudiants-payes-global'
 export const ASSIGN_PAYEMENT = 'assign'
 export const ASSIGN_TABLE = 'assign-etudiants'
 export const GET_TABLE_BY_CLASSE_ID = 'classe/:classeId'
+export const GET_TABLE_STATS = 'stats'
 
 export const GETTOTALMONTANT = 'get-montant'
 
