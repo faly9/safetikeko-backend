@@ -15,7 +15,8 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe())
 
   app.enableCors({
-    origin: 'https://safetikeko-backoffice.vercel.app',
+    // origin: 'https://safetikeko-backoffice.vercel.app',
+    origin: '*',
     credentials: true,
   })
 
