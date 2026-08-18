@@ -35,7 +35,7 @@ export class UserController {
     return this.userService.create_user(dto.pseudo, dto.password, dto.role)
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @Get(GETALL_USERS)
   get_all_users() {
