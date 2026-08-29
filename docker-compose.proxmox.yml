@@ -1,0 +1,33 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: safetikeko-backend
+    restart: unless-stopped
+
+    environment:
+      DATABASE_URL: "postgresql://postgres:2975@10.0.10.10:5432/safetikeko_bdd"
+      JWT_SECRET: "SUPER_SECRET_KEY"
+
+    ports:
+      - "10.0.10.11:5000:5000"
+
+  frontend:
+    build:
+      context: ../safetikeko-backoffice
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: "http://10.0.10.10:5000/api"
+
+    container_name: safetikeko-frontend
+    restart: unless-stopped
+
+    depends_on:
+      - backend
+
+    ports:
+      - "10.0.10.11:80:80"
+
+
+

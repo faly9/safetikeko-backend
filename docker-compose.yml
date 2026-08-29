@@ -1,24 +1,52 @@
 services:
+
+  postgres:
+    image: postgres:16
+    container_name: safetikeko-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 2975
+      POSTGRES_DB: safetikeko_bdd
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d safetikeko_bdd"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
   backend:
     build:
       context: .
       dockerfile: Dockerfile
+
     container_name: safetikeko-backend
     restart: unless-stopped
 
     environment:
-      DATABASE_URL: "postgresql://postgres:2975@10.0.10.10:5432/safetikeko_bdd"
+      DATABASE_URL: "postgresql://postgres:2975@postgres:5432/safetikeko_bdd"
       JWT_SECRET: "SUPER_SECRET_KEY"
 
     ports:
-      - "10.0.10.11:5000:5000"
+      - "192.168.0.102:5000:5000"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 
   frontend:
     build:
       context: ../safetikeko-backoffice
       dockerfile: Dockerfile
+
       args:
-        NEXT_PUBLIC_API_URL: "http://10.0.10.10:5000/api"
+        NEXT_PUBLIC_API_URL: "http://192.168.0.102:5000/api"
 
     container_name: safetikeko-frontend
     restart: unless-stopped
@@ -27,7 +55,8 @@ services:
       - backend
 
     ports:
-      - "10.0.10.11:80:80"
+      - "192.168.0.102:80:80"
 
 
-
+volumes:
+  postgres_data:
