@@ -16,7 +16,7 @@ async function bootstrap() {
 
   app.enableCors({
     // origin: 'https://safetikeko-backoffice.vercel.app',
-    origin: '*',
+    origin: 'http://10.0.10.9',
     credentials: true,
   })
 
