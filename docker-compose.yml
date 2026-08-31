@@ -33,7 +33,7 @@ services:
       JWT_SECRET: "SUPER_SECRET_KEY"
 
     ports:
-      - "10.0.10.12:5000:5000"
+      - "10.0.10.9:5000:5000"
 
     depends_on:
       postgres:
@@ -46,7 +46,7 @@ services:
       dockerfile: Dockerfile
 
       args:
-        NEXT_PUBLIC_API_URL: "http://10.0.10.12:5000/api"
+        NEXT_PUBLIC_API_URL: "http://10.0.10.9:5000/api"
 
     container_name: safetikeko-frontend
     restart: unless-stopped
@@ -55,7 +55,7 @@ services:
       - backend
 
     ports:
-      - "10.0.10.12:80:80"
+      - "10.0.10.9:80:80"
 
 
 volumes:
