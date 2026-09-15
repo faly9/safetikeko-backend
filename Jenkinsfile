@@ -8,7 +8,6 @@ pipeline {
         gitlab(
             triggerOnPush: true,
             triggerOnMergeRequest: false,
-            triggerOpenMergeRequestOnPush: false,
             branchFilterType: 'NameBasedFilter',
             includeBranchesSpec: 'main'
         )
