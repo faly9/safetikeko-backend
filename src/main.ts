@@ -22,5 +22,4 @@ async function bootstrap() {
 
   await app.listen(5000, '0.0.0.0')
 }
-// faly
 void bootstrap()
